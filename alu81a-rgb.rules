@@ -1,0 +1,12 @@
+# udev rule — grant the 'input' group rw access to the ALU81A keyboard's HID raw node
+# so that alu81a-rgb can be run without root.
+#
+# After installing, reload rules and re-plug (or trigger):
+#   sudo udevadm control --reload-rules
+#   sudo udevadm trigger
+# Then add your user to the input group:
+#   sudo usermod -aG input $USER
+# (Re-login for the group change to take effect.)
+
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="342d", ATTRS{idProduct}=="e40b", \
+    MODE="0660", GROUP="input", TAG+="uaccess"
