@@ -18,14 +18,6 @@ alu81a-rgb --off
 
 ## Installation
 
-### Arch Linux
-
-```bash
-yay -S alu81a-rgb
-```
-
-Completions, udev rule, and everything else are set up automatically.
-
 ### From source
 
 ```bash
