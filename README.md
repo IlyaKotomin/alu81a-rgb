@@ -18,6 +18,12 @@ alu81a-rgb --off
 
 ## Installation
 
+### Arch Linux
+
+```bash
+yay -S alu81a-rgb
+```
+
 ### From source
 
 ```bash
