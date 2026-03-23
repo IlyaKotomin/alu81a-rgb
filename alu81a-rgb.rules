@@ -1,2 +1,1 @@
-KERNEL=="hidraw*", ATTRS{idVendor}=="342d", ATTRS{idProduct}=="e40b", \
-    MODE="0660", GROUP="input", TAG+="uaccess"
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="342d", ATTRS{idProduct}=="e40b", MODE="0666"

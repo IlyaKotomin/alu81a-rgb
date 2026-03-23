@@ -222,6 +222,7 @@ static int send_command(int fd, uint8_t mode, uint8_t speed,
     int err;
     err = send_report(fd, REPORT_ID_A, mode, speed, hue, sat, brightness);
     if (err) return err;
+    usleep(50000); /* 50ms — give the MCU time to process before the second report */
     err = send_report(fd, REPORT_ID_B, mode, speed, hue, sat, brightness);
     return err;
 }
