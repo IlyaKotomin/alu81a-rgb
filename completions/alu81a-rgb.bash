@@ -9,7 +9,8 @@ _alu81a_rgb()
 
     local opts="--color --hex --rgb --hsl
                 -m --mode -s --speed -b --brightness
-                --off --device --list-modes --list-colors
+                --off --device --no-second-report --delay
+                --list-modes --list-colors
                 -v --verbose -h --help"
 
     local modes="disable direct solid alphas-mods gradient-ud gradient-lr
@@ -37,7 +38,7 @@ _alu81a_rgb()
         --device)
             COMPREPLY=( $(compgen -G "/dev/hidraw*") )
             return 0 ;;
-        --hex|--rgb|--hsl|-s|--speed|-b|--brightness)
+        --hex|--rgb|--hsl|-s|--speed|-b|--brightness|--delay)
             return 0 ;;
     esac
 

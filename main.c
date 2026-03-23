@@ -214,15 +214,19 @@ static int send_report(int fd, uint8_t report_id,
 }
 
 /* The protocol requires sending the same command twice: report 0x07 then 0x08.
+ * If no_second_report is non-zero, only the first report (0x07) is sent.
+ * delay_ms controls the pause before the second report (default 50ms).
  * Returns 0 on success, EPIPE if this interface rejected it (wrong interface),
  * or another errno for a real error. */
 static int send_command(int fd, uint8_t mode, uint8_t speed,
-                        uint8_t hue, uint8_t sat, uint8_t brightness)
+                        uint8_t hue, uint8_t sat, uint8_t brightness,
+                        int no_second_report, int delay_ms)
 {
     int err;
     err = send_report(fd, REPORT_ID_A, mode, speed, hue, sat, brightness);
     if (err) return err;
-    usleep(50000); /* 50ms — give the MCU time to process before the second report */
+    if (no_second_report) return 0;
+    usleep((unsigned int)delay_ms * 1000u);
     err = send_report(fd, REPORT_ID_B, mode, speed, hue, sat, brightness);
     return err;
 }
@@ -384,6 +388,8 @@ static void usage(const char *prog)
 "\n"
 "Other:\n"
 "  --device PATH        Override auto-detected hidraw device path\n"
+"  --no-second-report   Send only report 0x07; skip the follow-up 0x08 report\n"
+"  --delay MS           Delay in ms before the second report (default: 50)\n"
 "  --list-modes         Print all effect modes and exit\n"
 "  --list-colors        Print all named colors and exit\n"
 "  -v, --verbose        Show device path and HID payload\n"
@@ -412,12 +418,14 @@ int main(int argc, char *argv[])
     const char *color_hsl  = NULL;
     const char *mode_arg   = NULL;
     const char *device_arg = NULL;
-    int speed_arg      = -1;
-    int brightness_arg = -1;
-    int flag_off       = 0;
-    int flag_verbose   = 0;
-    int flag_modes     = 0;
-    int flag_colors    = 0;
+    int speed_arg           = -1;
+    int brightness_arg      = -1;
+    int delay_arg           = -1;
+    int flag_off            = 0;
+    int flag_verbose        = 0;
+    int flag_modes          = 0;
+    int flag_colors         = 0;
+    int flag_no_second_report = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -463,6 +471,11 @@ int main(int argc, char *argv[])
         } else if (strcmp(a, "--device") == 0) {
             NEED_ARG("--device");
             device_arg = argv[++i];
+        } else if (strcmp(a, "--no-second-report") == 0) {
+            flag_no_second_report = 1;
+        } else if (strcmp(a, "--delay") == 0) {
+            NEED_ARG("--delay");
+            delay_arg = atoi(argv[++i]);
         } else {
             fprintf(stderr, "Error: unknown option '%s'  (try --help)\n", a);
             return 1;
@@ -489,6 +502,11 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error: --brightness must be 0-100\n");
         return 1;
     }
+    if (delay_arg != -1 && delay_arg < 0) {
+        fprintf(stderr, "Error: --delay must be >= 0\n");
+        return 1;
+    }
+    int delay_ms = (delay_arg >= 0) ? delay_arg : 50;
 
     uint8_t hue = 0, sat = 0xFF;
 
@@ -575,7 +593,8 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        int err = send_command(fd, mode_id, speed, hue, sat, brightness);
+        int err = send_command(fd, mode_id, speed, hue, sat, brightness,
+                               flag_no_second_report, delay_ms);
         close(fd);
 
         if (err == 0) {

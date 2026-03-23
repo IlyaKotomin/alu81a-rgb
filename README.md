@@ -90,12 +90,14 @@ Run `alu81a-rgb --list-modes` to see all 45 modes.
 ### Other flags
 
 ```
---off            Turn off all LEDs
---device PATH    Override auto-detected hidraw device
---list-modes     Print all effect modes and exit
---list-colors    Print all named colors and exit
--v, --verbose    Show device path and HID payload
--h, --help       Show help and exit
+--off                  Turn off all LEDs
+--device PATH          Override auto-detected hidraw device
+--no-second-report     Send only report 0x07; skip the follow-up 0x08 report
+--delay MS             Delay in ms before the second report (default: 50)
+--list-modes           Print all effect modes and exit
+--list-colors          Print all named colors and exit
+-v, --verbose          Show device path and HID payload
+-h, --help             Show help and exit
 ```
 
 ### Examples

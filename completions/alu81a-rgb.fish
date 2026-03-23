@@ -100,6 +100,8 @@ complete -c alu81a-rgb -s m -l mode -d 'Effect mode' -r -a "
 complete -c alu81a-rgb -s s -l speed      -d 'Animation speed 0-255 (255=fastest)' -r
 complete -c alu81a-rgb -s b -l brightness -d 'Global brightness 0-100 percent'     -r
 
-# Device
-complete -c alu81a-rgb -l device -d 'Override hidraw device path' -r \
+# Device / protocol tweaks
+complete -c alu81a-rgb -l device            -d 'Override hidraw device path' -r \
     -a "(ls /dev/hidraw* 2>/dev/null)"
+complete -c alu81a-rgb -l no-second-report  -d 'Send only report 0x07; skip follow-up 0x08'
+complete -c alu81a-rgb -l delay             -d 'Delay in ms before second report (default: 50)' -r

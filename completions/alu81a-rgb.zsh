@@ -81,7 +81,9 @@ _alu81a_rgb() {
         '(-m --mode)'{-m,--mode}'[Effect mode]:mode:->modes' \
         '(-s --speed)'{-s,--speed}'[Animation speed 0-255]:speed (0-255):' \
         '(-b --brightness)'{-b,--brightness}'[Global brightness 0-100]:brightness (0-100):' \
-        "--device[Override hidraw device path]:device:($hidraw_devs)"
+        "--device[Override hidraw device path]:device:($hidraw_devs)" \
+        '--no-second-report[Send only report 0x07; skip follow-up 0x08]' \
+        '--delay[Delay in ms before second report (default\: 50)]:milliseconds:'
 
     case $state in
         modes)  _describe 'mode' modes ;;
